@@ -3,9 +3,7 @@ import ReactDOM from 'react-dom'
 
 const Header = () => <h2>Give feedback</h2>
 
-const Button = ({ onClickEvent, content }) => (
-  <button onClick={onClickEvent}>{content}</button>
-);
+const Button = ({ onClickEvent, content }) => <button onClick={onClickEvent}>{content}</button>
 
 const Statistic = ({title, value}) => <tr><td>{title}</td><td>{value}</td></tr>
 
