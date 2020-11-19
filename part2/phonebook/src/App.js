@@ -20,6 +20,8 @@ const App = () => {
       return window.alert(`${newName} is already added to phonebook`)
     } else {
       setPersons([...persons, {name: newName, number: newNumber}])
+      setNewName('')
+      setNewNumber('')
     }
   }
 
