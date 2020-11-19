@@ -4,6 +4,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 
 const App = () => {
+
   const [ persons, setPersons ] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
     { name: 'Ada Lovelace', number: '39-44-5323523' },
@@ -13,6 +14,11 @@ const App = () => {
   const [ search, setSearch ] = useState('')
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
+  const [ showAll, setShowAll ] = useState(true)
+
+  const personsToShow = showAll
+    ? persons
+    : persons.filter(person => person.name.toLowerCase().startsWith(search.toLowerCase()))
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -27,6 +33,7 @@ const App = () => {
 
   const handleSearch = (e) => {
     setSearch(e.target.value)
+    e.target.value.length > 0 ? setShowAll(false) : setShowAll(true)
   }
 
   const handleChangeName = (e) => {
@@ -51,7 +58,7 @@ const App = () => {
         handleChangeNumber={handleChangeNumber}
       />
       <h3 style={{marginTop: 2 + "em"}}>Contacts</h3>
-      <Persons persons={persons} />
+      <Persons persons={personsToShow} />
     </div>
   )
 }
