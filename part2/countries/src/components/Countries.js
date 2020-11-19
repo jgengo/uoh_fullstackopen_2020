@@ -2,18 +2,18 @@ import React from 'react';
 
 import Country from './Country';
 
-const ListCountry = ({country}) => {
-    return (
-        <li>{country.name}</li>
-    )
-};
 
-const Countries = ({countries}) => {
+
+const Countries = ({countries, setSearch}) => {
+    const handleShow = (e) => {
+        setSearch(e.target.value)
+    }
+
     if (countries.length > 1)
     {
         return (
             <ul>
-                {countries.map( (country) => <ListCountry key={country.name} country={country} />)}
+                {countries.map( (country) => <li>{country.name} <button onClick={handleShow} value={country.name}>show</button></li> )}
             </ul>
         );
     } else {

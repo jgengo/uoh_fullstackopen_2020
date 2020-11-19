@@ -42,7 +42,7 @@ const App = () => {
       </div>
       <div>
         {error !== '' ? ( <Error error={error} /> ) : ('') }
-        {countries.length > 0 && countries.length < 10 ? ( <Countries countries={countries} />) : ('')}
+        {countries.length > 0 && countries.length < 10 ? ( <Countries countries={countries} setSearch={setSearch}/>) : ('')}
       </div>
     </div>
   );
