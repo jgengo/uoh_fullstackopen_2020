@@ -11,8 +11,8 @@ Learn React, Redux, Node.js, MongoDB, GraphQL and TypeScript in one go! This cou
 
  - [x] **Part 0** - Fundamentals of Web apps
  - [x] **Part 1** - Introduction to React
- - [ ] **Part 2** - Communicating with server
- - [ ] **Part 3** - Programming a server with NodeJS and Express
+ - [x] **Part 2** - Communicating with server
+ - [ ] **Part 3** - Programming a server with NodeJS and Express (repo: [here](https://github.com/jgengo/uoh_fullstackopen_2020_part3))
  - [ ] **Part 4** - Testing Express server, user administration
  - [ ] **Part 5** - Testing React apps
  - [ ] **Part 6** - State management with Redux
