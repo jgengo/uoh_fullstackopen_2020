@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Persons = ({persons}) => {
+const Persons = ({persons, handleDestroy}) => {
     return (
         <ul>
-            {persons.map( person => <li key={person.name}>{person.name} {person.number}</li>)}
+            {persons.map( person => <li key={person.name}>{person.name} {person.number} <button onClick={() => handleDestroy(person.id)}>delete</button></li>)}
         </ul>
     )
     

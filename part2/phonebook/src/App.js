@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+
+import personService from './services/persons'
 
 const App = () => {
 
@@ -14,8 +15,8 @@ const App = () => {
   const [ showAll, setShowAll ] = useState(true)
 
   useEffect( () => {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then( (res) => {
         setPersons(res.data)
       })
@@ -28,12 +29,31 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.filter( p => p.name === newName).length > 0) {
-      return window.alert(`${newName} is already added to phonebook`)
-    } else {
-      setPersons([...persons, {name: newName, number: newNumber}])
-      setNewName('')
-      setNewNumber('')
+    if (newName === '' || newNumber === '')
+      return window.alert('make an effort, fill the form');
+
+    const existingUser = persons.find( p => p.name === newName)
+    if (existingUser) {
+      if (window.confirm(`${newName} already exist in the db, wanna replace the old number by the new one?`)) {
+        personService
+        .update(existingUser.id, {name: newName, number: newNumber})
+        .then( (res) => {
+          setPersons(
+            persons.map ( (person) => person.id === existingUser.id ? res.data : person)
+          )
+          window.alert(`${newName} has been updated.`);
+        })
+
+        }
+      } else {
+      personService
+      .create({name: newName, number: newNumber})
+      .then( (_res) => { 
+        setPersons([...persons, {name: newName, number: newNumber}])
+        setNewName('')
+        setNewNumber('')
+      })
+      .catch( (_err) => window.alert('error while creating this user in db') )
     }
   }
 
@@ -41,6 +61,27 @@ const App = () => {
     setSearch(e.target.value)
     console.log(search)
     e.target.value.length > 0 ? setShowAll(false) : setShowAll(true)
+  }
+
+  const handleDestroy = (id) => {
+    personService
+    .get(id)
+    .then( (res) => {
+      if (window.confirm(`Are you sure you wanna delete ${res.data.name}`))
+      {
+        personService
+        .destroy(id)
+        .then( () => {
+          setPersons(persons.filter( (person) => person.id !== id ));
+        })
+        .catch( (_err) => {
+          window.alert(`failed to delete ${res.data.name}`)
+        })
+      }
+    })
+    .catch( (_noob) => {
+      window.alert('wth are doing?')
+    })
   }
 
   const handleChangeName = (e) => {
@@ -65,7 +106,7 @@ const App = () => {
         handleChangeNumber={handleChangeNumber}
       />
       <h3 style={{marginTop: 2 + "em"}}>Contacts</h3>
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} handleDestroy={handleDestroy} />
     </div>
   )
 }
