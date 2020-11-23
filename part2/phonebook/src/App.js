@@ -6,6 +6,9 @@ import Persons from './components/Persons';
 
 import personService from './services/persons'
 
+import './index.css'
+
+
 const App = () => {
 
   const [ persons, setPersons ] = useState([])
@@ -13,6 +16,30 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ showAll, setShowAll ] = useState(true)
+  const [ errorMessage, setErrorMessage ] = useState(null)
+  const [ errorType, setErrorType ] = useState(null)
+
+  const notify = (message, type) => {
+    setErrorMessage(message)
+    setErrorType(type)
+    setTimeout(() => {
+      setErrorMessage(null)
+      setErrorType(null)
+    }, 5000)
+  }
+
+  const Flash = ({message, type}) => {
+    if (message === null) {
+      return null
+    }
+
+    return (
+      <div className={type}>
+        <p>{message}</p>
+      </div>
+    )
+
+  }
 
   useEffect( () => {
     personService
@@ -30,7 +57,7 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     if (newName === '' || newNumber === '')
-      return window.alert('make an effort, fill the form');
+      return notify('make an effort, fill the form', 'error');
 
     const existingUser = persons.find( p => p.name === newName)
     if (existingUser) {
@@ -41,7 +68,7 @@ const App = () => {
           setPersons(
             persons.map ( (person) => person.id === existingUser.id ? res.data : person)
           )
-          window.alert(`${newName} has been updated.`);
+          notify(`${newName} has been updated.`, 'success');
         })
 
         }
@@ -52,8 +79,9 @@ const App = () => {
         setPersons([...persons, {name: newName, number: newNumber}])
         setNewName('')
         setNewNumber('')
+        notify("succesfully added.", "success")
       })
-      .catch( (_err) => window.alert('error while creating this user in db') )
+      .catch( (_err) => notify('error while creating this user in db', 'error') )
     }
   }
 
@@ -73,14 +101,19 @@ const App = () => {
         .destroy(id)
         .then( () => {
           setPersons(persons.filter( (person) => person.id !== id ));
+          notify('sucessfully deleted.', 'success')
         })
-        .catch( (_err) => {
-          window.alert(`failed to delete ${res.data.name}`)
+        .catch( (err) => {
+          if (err.response) {
+            if (err.response.status === 404) notify(`${res.data.name} has already been deleted.`, "error");
+          } else {
+            notify(`failed to delete ${res.data.name}`, 'error')
+          }
         })
       }
     })
     .catch( (_noob) => {
-      window.alert('wth are doing?')
+      notify('wth are doing?', 'error')
     })
   }
 
@@ -95,6 +128,7 @@ const App = () => {
   return (
     
     <div>
+      <Flash message={errorMessage} type={errorType} />
       <h1>Phonebook</h1>
       <Filter value={search} onChange={handleSearch} />
       <h3 style={{marginTop: 2 + "em"}}>add new number</h3>

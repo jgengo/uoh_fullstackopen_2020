@@ -1,0 +1,25 @@
+.success {
+    border-color: #2196F3;
+    color: #000!important;
+    background-color: #ddffff!important;
+    border-left: 6px solid #2196F3;
+    padding: 0.01em 16px;
+}
+
+.error {
+    border-color: #f30000;
+    color: #000!important;
+    background-color: #ffe1dd!important;
+    border-left: 6px solid #f30000;
+    padding: 0.01em 16px;
+}
+
+.error > p {
+    margin-top: 1.2em;
+    margin-bottom: 1.2em;
+}
+
+.success > p {
+    margin-top: 1.2em;
+    margin-bottom: 1.2em;
+}
