@@ -62,3 +62,38 @@ describe('total likes', () => {
     expect(result).toBe(20)
   })
 })
+
+describe('most likes', () => {
+  const listBlog = [{
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    likes: 12
+  }]
+  const listBlogs = [{
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    likes: 12
+  }, {
+    title: "Rihanna",
+    author: "Rihanna",
+    likes: 11500
+  }]
+
+  
+  test('with one entry', () => {
+    const result = listHelper.favoriteBlog(listBlog)
+    expect(result).toEqual(listBlog[0])
+  })
+    
+  test('with two entry', () => {
+    const result = listHelper.favoriteBlog(listBlogs)
+    expect(result).toEqual({
+      title: "Rihanna",
+      author: "Rihanna",
+      likes: 11500
+    })
+  })
+
+
+
+})
