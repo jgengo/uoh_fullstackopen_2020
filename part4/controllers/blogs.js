@@ -40,7 +40,7 @@ blogsRouter.delete('/:id', async (req, response) => {
 
   const blog = await Blog.findById(req.params.id)
   if (blog.user.toString() !== user.id.toString())
-    return response.status(403).json({error: 'you are not allowed to do that!'})
+    return response.status(401).json({error: 'you are not allowed to do that!'})
 
   const result = await Blog.findByIdAndDelete(req.params.id)
   return response.status(204).end()

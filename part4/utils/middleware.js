@@ -16,7 +16,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   } else if (error.name === 'JsonWebTokenError') {
-    return response.status(403).json({error: 'you need to use your json creds'})
+    return response.status(401).json({error: 'you need to use your json creds'})
   }
 
   next(error)

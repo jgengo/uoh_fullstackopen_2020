@@ -5,6 +5,29 @@ const app = require('../app')
 const api = supertest(app)
 
 const Blog = require('../models/blog')
+const User = require('../models/user')
+
+let token
+
+beforeAll(async () => {
+	await User.deleteMany({});
+
+	const myUser = {
+		username: 'titus',
+		password: 'I<3FINLAND',
+		name: 'Jordane G.',
+	};
+
+  await api.post('/api/users')
+    .send(myUser)
+  
+	const login = await api.post('/api/login').send({
+		username: myUser.username,
+		password: myUser.password,
+  });
+  token = login.body.token;
+});
+
 
 const initialBlogs = [
   {
@@ -23,13 +46,11 @@ const initialBlogs = [
 
 beforeEach(async () => {
   await Blog.deleteMany({})
-
-  initialBlogs.forEach(async (blog) => {
-    let blogObject = new Blog(blog)
-    await blogObject.save()
-  })
+  let noteObject = new Blog(initialBlogs[0])
+  await noteObject.save()
+  noteObject = new Blog(initialBlogs[1])
+  await noteObject.save()
 })
-
 
 test('blogs are returned as json', async () => {
   await api
@@ -45,7 +66,6 @@ test('all blogs are returned', async () => {
 
 test('field id is present', async () => {
   const resp = await api.get('/api/blogs/')
-  
   expect(resp.body[0].id).toBeDefined()
 })
 
@@ -60,6 +80,7 @@ test('a valid blog can be added', async () => {
 
   await api
     .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -84,6 +105,7 @@ test ('a valid blog can be added with 0 likes by default', async() => {
 
   const res = await api
     .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
@@ -99,6 +121,7 @@ test ('an invalid blog lead to 400', async () => {
 
   await api
     .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
     .send(newBlogWithoutTitle)
     .expect(400)
     .expect('Content-Type', /application\/json/)
@@ -110,10 +133,25 @@ test ('an invalid blog lead to 400', async () => {
 
   await api
     .post('/api/blogs')
+    .set('authorization', `bearer ${token}`)
     .send(newBlogWithoutAuthor)
     .expect(400)
     .expect('Content-Type', /application\/json/)
 
+})
+
+test ('posting without creds leads to 403', async () => {
+  const newBlog = {
+    author: "Roger That",
+    title: "mita vitua",
+    url: "na"
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+    .expect('Content-Type', /application\/json/)
 })
 
 afterAll(() => {
