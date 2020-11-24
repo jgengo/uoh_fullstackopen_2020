@@ -14,7 +14,8 @@ mongoose.connect(config.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology
 
 const blogSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  author: {
+  author: { type: String, required: true },
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }, 
