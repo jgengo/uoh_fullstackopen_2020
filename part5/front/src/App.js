@@ -83,6 +83,20 @@ const App = () => {
     }    
   }
 
+  const handleDelete = async (blogId) => {
+    if (window.confirm("Are you sure you wanna delete that?"))
+      {
+      try {
+        await blogService.destroy(blogId)
+        setBlogs( blogs.filter ( blog => blog.id !== blogId ))
+        notify('Successfully deleted. There are worse crimes than burning books. One of them is not reading them.', 'success')
+      } catch(err) { 
+        if (err.response && err.response.data && err.response.data.error)
+          notify(err.response.data.error, 'error')
+      }
+    }
+  }
+
   const handleLike = async (blogObject) => {
     try {
       await blogService.update(blogObject)
@@ -120,7 +134,17 @@ const App = () => {
         </Togglable>
 
         <ul>
-          {blogs.map(blog => <Blog blog={blog} handleLike={handleLike} key={blog.id} />)}
+          {
+            blogs.map(blog => 
+              <Blog 
+                blog={blog} 
+                handleLike={handleLike} 
+                canDelete={blog.user.username === user.username ? true : false} 
+                handleDelete={handleDelete}
+                key={blog.id}
+              />
+            )
+          }
         </ul>
 
       </div>
