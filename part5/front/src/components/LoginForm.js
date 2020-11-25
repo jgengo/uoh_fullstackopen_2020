@@ -20,7 +20,7 @@ const LoginForm = (props) => {
             value={props.password}
             onChange={props.handlePasswordChange}
           />
-      </div>
+        </div>
         <button type="submit">login</button>
       </form>
     </div>

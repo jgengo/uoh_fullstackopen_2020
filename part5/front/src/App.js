@@ -14,7 +14,7 @@ import './App.css'
 const App = () => {
   const [blogs, setBlogs] = useState([])
 
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
@@ -26,7 +26,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ) )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -50,13 +50,13 @@ const App = () => {
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({username: username, password: password})
+      const user = await loginService.login({ username: username, password: password })
       setUser(user)
       setUsername('')
       setPassword('')
       window.localStorage.setItem(
         'loggedBlogUser', JSON.stringify(user)
-      ) 
+      )
       notify('successfully logged in!', 'success')
     } catch (error) {
       notify(`${error.response.data.error}`, 'error')
@@ -80,17 +80,17 @@ const App = () => {
     } catch(err) {
       if (err.response && err.response.data && err.response.data.error)
         notify(err.response.data.error, 'error')
-    }    
+    }
   }
 
   const handleDelete = async (blogId) => {
-    if (window.confirm("Are you sure you wanna delete that?"))
-      {
+    if (window.confirm('Are you sure you wanna delete that?'))
+    {
       try {
         await blogService.destroy(blogId)
         setBlogs( blogs.filter ( blog => blog.id !== blogId ))
         notify('Successfully deleted. There are worse crimes than burning books. One of them is not reading them.', 'success')
-      } catch(err) { 
+      } catch(err) {
         if (err.response && err.response.data && err.response.data.error)
           notify(err.response.data.error, 'error')
       }
@@ -105,22 +105,22 @@ const App = () => {
       if (err.response && err.response.data && err.response.data.error)
         notify(err.response.data.error, 'error')
     }
-    
+
   }
 
   if (user === null) {
     return (
       <div>
-      <Flash message={errorMessage} type={errorType} />
+        <Flash message={errorMessage} type={errorType} />
 
-      <LoginForm 
-        handleSubmit={handleLogin}
-        username={username}
-        handleUsernameChange={ ({target}) => setUsername(target.value) }
-        password={password}
-        handlePasswordChange={ ({target}) => setPassword(target.value) }
-      />
-    </div>
+        <LoginForm
+          handleSubmit={handleLogin}
+          username={username}
+          handleUsernameChange={ ({ target }) => setUsername(target.value) }
+          password={password}
+          handlePasswordChange={ ({ target }) => setPassword(target.value) }
+        />
+      </div>
     )
   } else {
     return (
@@ -129,17 +129,17 @@ const App = () => {
         <em>Logged in as {user.username} ({user.name}) <button onClick={handleLogout}>logout</button></em>
         <h2>blogs</h2>
 
-        <Togglable buttonLabel="new note" ref={blogFormRef}>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
           <BlogForm createBlog={handleCreate} />
         </Togglable>
 
         <ul>
           {
-            blogs.map(blog => 
-              <Blog 
-                blog={blog} 
-                handleLike={handleLike} 
-                canDelete={blog.user.username === user.username ? true : false} 
+            blogs.map(blog =>
+              <Blog
+                blog={blog}
+                handleLike={handleLike}
+                canDelete={blog.user.username === user.username ? true : false}
                 handleDelete={handleDelete}
                 key={blog.id}
               />

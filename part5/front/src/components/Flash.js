@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Flash = ({message, type}) => {
+const Flash = ({ message, type }) => {
   if (message === null) {
     return null
   }
