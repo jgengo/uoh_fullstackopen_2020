@@ -25,7 +25,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ) )
     )  
   }, [])
 
@@ -83,6 +83,16 @@ const App = () => {
     }    
   }
 
+  const handleLike = async (blogObject) => {
+    try {
+      await blogService.update(blogObject)
+      setBlogs(blogs.map( blog => blog.id === blogObject.id ? blogObject : blog ))
+    } catch(err) {
+      if (err.response && err.response.data && err.response.data.error)
+        notify(err.response.data.error, 'error')
+    }
+    
+  }
 
   if (user === null) {
     return (
@@ -109,7 +119,9 @@ const App = () => {
           <BlogForm createBlog={handleCreate} />
         </Togglable>
 
-        <ul style={{listStylePosition: 'inside', padding: 0}}>{blogs.map(blog => <Blog blog={blog} />)}</ul>
+        <ul>
+          {blogs.map(blog => <Blog blog={blog} handleLike={handleLike} key={blog.id} />)}
+        </ul>
 
       </div>
     )

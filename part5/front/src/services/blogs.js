@@ -21,5 +21,25 @@ const create = async (newObject) => {
   return response.data
 }
 
+const update = async (newObject) => {
+  const config = {
+    headers: { Authorization: token },
+  }
 
-export default { getAll, create, setToken }
+  const payload = {
+    title: newObject.title,
+    url: newObject.url,
+    author: newObject.author,
+    likes: newObject.likes,
+    // I don't need user (or any other field than likes)
+    // because I dev like god, but anyway let's keep title, author, url just in case)
+    // ^ (it's ironic obviously, hein? you get it?)
+  }
+
+  const response = await axios.put(`${baseUrl}/${newObject.id}`, payload, config)
+  return response.data
+
+}
+
+
+export default { getAll, create, update, setToken }
