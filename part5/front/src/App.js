@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 import Blog from './components/Blog'
 import Flash from './components/Flash'
+import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -15,12 +18,10 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
   const [ errorMessage, setErrorMessage ] = useState(null)
   const [ errorType, setErrorType ] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -70,43 +71,31 @@ const App = () => {
     notify('successfully logged out', 'success')
   }
 
-  const handleCreate = async (event) => {
-    event.preventDefault()
+  const handleCreate = async (blogObject) => {
     try {
-      await blogService.create({author: author, url: url, title: title})
-      notify(`${title} by ${author} has just been added.`, 'success')
+      blogFormRef.current.toggleVisibility()
+      const blog = await blogService.create(blogObject)
+      setBlogs(blogs.concat(blog))
+      notify(`${blogObject.title} by ${blogObject.author} has just been added.`, 'success')
     } catch(err) {
       if (err.response && err.response.data && err.response.data.error)
         notify(err.response.data.error, 'error')
-    }
-    
+    }    
   }
+
 
   if (user === null) {
     return (
       <div>
       <Flash message={errorMessage} type={errorType} />
-      <form onSubmit={handleLogin}>
-      <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
-      </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
+
+      <LoginForm 
+        handleSubmit={handleLogin}
+        username={username}
+        handleUsernameChange={ ({target}) => setUsername(target.value) }
+        password={password}
+        handlePasswordChange={ ({target}) => setPassword(target.value) }
+      />
     </div>
     )
   } else {
@@ -115,29 +104,13 @@ const App = () => {
         <Flash message={errorMessage} type={errorType} />
         <em>Logged in as {user.username} ({user.name}) <button onClick={handleLogout}>logout</button></em>
         <h2>blogs</h2>
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
 
-        <h2>Add new one</h2>
-        <form onSubmit={handleCreate}>
-          <div>
-          title
-          <input type="text" value={title} name="title" onChange={({ target }) => setTitle(target.value)} />
-          </div>
-          
-          <div>
-          author
-          <input type="text" value={author} name="author" onChange={({ target }) => setAuthor(target.value)} />
-          </div>
-          
-          
-          <div>
-          url
-          <input type="text" value={url} name="url" onChange={({ target }) => setUrl(target.value)} />
-          </div>
-          <button type="submit">add</button>
-        </form>
+        <Togglable buttonLabel="new note" ref={blogFormRef}>
+          <BlogForm createBlog={handleCreate} />
+        </Togglable>
+
+        <ul style={{listStylePosition: 'inside', padding: 0}}>{blogs.map(blog => <Blog blog={blog} />)}</ul>
+
       </div>
     )
   }
