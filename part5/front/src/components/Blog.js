@@ -24,11 +24,11 @@ const Blog = ({ blog, handleLike, canDelete, handleDelete }) => {
   }
 
   return (
-    <li style={blogStyle}>
+    <li className='blog' style={blogStyle}>
       <em>{blog.title}</em> by <strong>{blog.author}</strong>
       <Togglable buttonLabel='view' buttonHide='hide'>
         <p><a href={blog.url}>{blog.url}</a></p>
-        <p>likes {blog.likes} <button onClick={ () => addLike(blog)}>like</button></p>
+        <p>likes {blog.likes} <button className='buttonLike' onClick={ () => addLike(blog)}>like</button></p>
         <p>Added by {blog.user.name}</p>
         {canDelete ?
           <button style={deleteButtonStyle} onClick={ () => handleDelete(blog.id)}>DESTROY!</button> :
