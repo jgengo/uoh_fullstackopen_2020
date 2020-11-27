@@ -6,7 +6,7 @@ const Flash = ({ message, type }) => {
   }
 
   return (
-    <div className={type}>
+    <div id='error' className={type}>
       <p>{message}</p>
     </div>
   )
