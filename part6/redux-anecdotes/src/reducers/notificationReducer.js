@@ -1,4 +1,6 @@
 
+let timer
+
 const initialState = {
   content: null
 }
@@ -9,7 +11,8 @@ export const createNotification = (content, seconds=5) => {
       type: 'SET_NOTIFICATION',
       data: { content }
     })
-    setTimeout(() => dispatch({type: 'RESET'}), seconds * 1000)
+    clearTimeout(timer)
+    timer = setTimeout(() => dispatch({type: 'RESET'}), seconds * 1000)
   }
 }
 
