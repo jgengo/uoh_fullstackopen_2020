@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Switch, Route } from "react-router-dom"
+import { Switch, Route, useRouteMatch } from "react-router-dom"
 
 import About from './components/About'
+import Anecdote from './components/Anecdote'
 import AnecdoteList from './components/AnecdoteList'
 import Menu from './components/Menu'
 
@@ -77,8 +78,10 @@ const App = () => {
     setAnecdotes(anecdotes.concat(anecdote))
   }
 
-  const anecdoteById = (id) =>
-    anecdotes.find(a => a.id === id)
+  const anecdoteById = (id) => anecdotes.find(a => a.id === id)
+
+  const match = useRouteMatch('/anecdotes/:id')
+  const anecdote = match ? anecdoteById(match.params.id) : null
 
   const vote = (id) => {
     const anecdote = anecdoteById(id)
@@ -96,12 +99,19 @@ const App = () => {
         <h1>Software anecdotes</h1>
         <Menu />
         <Switch>
+
           <Route exact path='/'>
             <AnecdoteList anecdotes={anecdotes} />
           </Route>
+
+          <Route path='/anecdotes/:id'>
+            <Anecdote anecdote={anecdote} />
+          </Route>
+
           <Route path='/about'>
             <About />
           </Route>
+
           <Route path='/new'>
             <CreateNew addNew={addNew} />
           </Route>
