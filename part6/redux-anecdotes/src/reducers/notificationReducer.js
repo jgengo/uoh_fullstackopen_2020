@@ -3,15 +3,14 @@ const initialState = {
   content: null
 }
 
-export const createNotification = (content) => {
-  return {
-    type: "SET_NOTIFICATION",
-    data: { content }
+export const createNotification = (content, seconds=5) => {
+  return dispatch => {
+    dispatch({
+      type: 'SET_NOTIFICATION',
+      data: { content }
+    })
+    setTimeout(() => dispatch({type: 'RESET'}), seconds * 1000)
   }
-}
-
-export const resetNotification = () => {
-  return { type: "RESET" }
 }
 
 const reducer = (state = initialState, action) => {
