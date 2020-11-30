@@ -1,40 +1,9 @@
 import React, { useState } from 'react'
+import { Switch, Route } from "react-router-dom"
 
-const Menu = () => {
-  const padding = {
-    paddingRight: 5
-  }
-  return (
-    <div>
-      <a href='#' style={padding}>anecdotes</a>
-      <a href='#' style={padding}>create new</a>
-      <a href='#' style={padding}>about</a>
-    </div>
-  )
-}
-
-const AnecdoteList = ({ anecdotes }) => (
-  <div>
-    <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
-    </ul>
-  </div>
-)
-
-const About = () => (
-  <div>
-    <h2>About anecdote app</h2>
-    <p>According to Wikipedia:</p>
-
-    <em>An anecdote is a brief, revealing account of an individual person or an incident.
-      Occasionally humorous, anecdotes differ from jokes because their primary purpose is not simply to provoke laughter but to reveal a truth more general than the brief tale itself,
-      such as to characterize a person by delineating a specific quirk or trait, to communicate an abstract idea about a person, place, or thing through the concrete details of a short narrative.
-      An anecdote is "a story with a point."</em>
-
-    <p>Software engineering is full of excellent anecdotes, at this app you can find the best and add more.</p>
-  </div>
-)
+import About from './components/About'
+import AnecdoteList from './components/AnecdoteList'
+import Menu from './components/Menu'
 
 const Footer = () => (
   <div>
@@ -123,14 +92,22 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1>Software anecdotes</h1>
-      <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
-      <Footer />
-    </div>
+      <div>
+        <h1>Software anecdotes</h1>
+        <Menu />
+        <Switch>
+          <Route exact path='/'>
+            <AnecdoteList anecdotes={anecdotes} />
+          </Route>
+          <Route path='/about'>
+            <About />
+          </Route>
+          <Route path='/new'>
+            <CreateNew addNew={addNew} />
+          </Route>
+        </Switch>
+        <Footer />
+      </div>
   )
 }
 
