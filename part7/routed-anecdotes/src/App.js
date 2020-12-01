@@ -34,7 +34,7 @@ const CreateNew = (props) => {
       votes: 0
     })
     history.push('/')
-    props.addNotification(`you just added a new anecdote ${content}`)
+    props.addNotification(`you just added a new anecdote ${content.value}`)
   }
 
   return (
