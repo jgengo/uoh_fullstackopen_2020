@@ -25,7 +25,6 @@ const CreateNew = (props) => {
 
 
   const handleSubmit = (e) => {
-    console.log(content)
     e.preventDefault()
     props.addNew({
       content: content.value,
@@ -38,9 +37,9 @@ const CreateNew = (props) => {
   }
 
   const handleReset = () => {
-    content.reset()
-    author.reset()
-    info.reset()
+    content.onChange({target: { value: ""}})
+    author.onChange({target: { value: ""}})
+    info.onChange({target: { value: ""}})
   }
 
   return (
@@ -49,15 +48,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input id='content' {...content} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input id='author' {...author} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input id='info' {...info} />
         </div>
         <button type='submit'>create</button>
         <button type='reset' onClick={handleReset}>reset</button>
