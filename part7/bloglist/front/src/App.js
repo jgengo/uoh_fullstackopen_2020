@@ -12,37 +12,29 @@ import loginService from './services/login'
 
 import { createNotification } from './reducers/notificationReducer'
 import { initBlog, createBlog, voteFor, destroy } from './reducers/blogReducer'
+import { setUser, logout } from './reducers/userReducer'
 
 import './App.css'
 
 const App = (props) => {
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
 
   const blogFormRef = useRef()
-
-  // useEffect(() => {
-  //   blogService.getAll().then(blogs =>
-  //     setBlogs( blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ) )
-  //   )
-  // }, [])
 
   useEffect( () => {
     props.initBlog()
   }, [props])
 
-
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+    if (user.username) {
       blogService.setToken(user.token)
     }
-  }, [])
+  }, [user])
 
   const notify = (message, type) => {
     props.createNotification({message: message, type: type}, 10)
@@ -52,12 +44,9 @@ const App = (props) => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username: username, password: password })
-      setUser(user)
+      props.setUser(user)
       setUsername('')
       setPassword('')
-      window.localStorage.setItem(
-        'loggedBlogUser', JSON.stringify(user)
-      )
       notify('successfully logged in!', 'success')
     } catch (error) {
       notify(`${error.response.data.error}`, 'error')
@@ -67,8 +56,7 @@ const App = (props) => {
   const handleLogout = (event) => {
     event.preventDefault()
     blogService.setToken(null)
-    setUser(null)
-    window.localStorage.removeItem('loggedBlogUser')
+    props.logout()
     notify('successfully logged out', 'success')
   }
 
@@ -100,7 +88,7 @@ const App = (props) => {
     props.voteFor(blogObject)
   }
 
-  if (user === null) {
+  if (user.username === null) {
     return (
       <div>
         <Flash />
@@ -149,6 +137,8 @@ const mapDispatchToProps = {
   createBlog,
   voteFor,
   destroy,
+  setUser,
+  logout,
   createNotification
 }
 

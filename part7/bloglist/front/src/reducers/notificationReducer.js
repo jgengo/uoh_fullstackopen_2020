@@ -19,7 +19,6 @@ export const createNotification = (data, seconds=5) => {
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_NOTIFICATION':
-      console.log(action.data)
       return action.data
     case 'RESET':
       return initialState

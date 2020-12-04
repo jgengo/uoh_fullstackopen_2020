@@ -11,21 +11,6 @@ export const destroy = (blogId) => {
   }
 }
 
-
-  // const handleDelete = async (blogId) => {
-  //   if (window.confirm('Are you sure you wanna delete that?'))
-  //   {
-  //     try {
-  //       await blogService.destroy(blogId)
-  //       setBlogs( blogs.filter ( blog => blog.id !== blogId ))
-  //       notify('Successfully deleted. There are worse crimes than burning books. One of them is not reading them.', 'success')
-  //     } catch(err) {
-  //       if (err.response && err.response.data && err.response.data.error)
-  //         notify(err.response.data.error, 'error')
-  //     }
-  //   }
-  // }
-
 export const voteFor = (blogObject) => {
   return async dispatch => {
     await blogService.update(blogObject)
