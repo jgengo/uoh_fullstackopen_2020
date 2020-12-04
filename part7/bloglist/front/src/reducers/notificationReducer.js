@@ -2,7 +2,7 @@ let timer
 
 const initialState = {
   message: null,
-  type: null 
+  type: null
 }
 
 export const createNotification = (data, seconds=5) => {
@@ -17,7 +17,6 @@ export const createNotification = (data, seconds=5) => {
 }
 
 const reducer = (state = initialState, action) => {
-  console.log('ici')
   switch (action.type) {
     case 'SET_NOTIFICATION':
       console.log(action.data)

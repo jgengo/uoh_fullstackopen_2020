@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 
 import Blog from './components/Blog'
 import Flash from './components/Flash'
@@ -11,26 +11,29 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 import { createNotification } from './reducers/notificationReducer'
+import { initBlog, createBlog, voteFor, destroy } from './reducers/blogReducer'
 
 import './App.css'
 
 const App = (props) => {
-  const [blogs, setBlogs] = useState([])
+  const blogs = useSelector(state => state.blogs)
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  // const [ errorMessage, setErrorMessage ] = useState(null)
-  // const [ errorType, setErrorType ] = useState(null)
-
   const blogFormRef = useRef()
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ) )
-    )
-  }, [])
+  // useEffect(() => {
+  //   blogService.getAll().then(blogs =>
+  //     setBlogs( blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ) )
+  //   )
+  // }, [])
+
+  useEffect( () => {
+    props.initBlog()
+  }, [props])
+
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
@@ -72,8 +75,7 @@ const App = (props) => {
   const handleCreate = async (blogObject) => {
     try {
       blogFormRef.current.toggleVisibility()
-      const blog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(blog))
+      props.createBlog(blogObject)
       notify(`${blogObject.title} by ${blogObject.author} has just been added.`, 'success')
     } catch(err) {
       if (err.response && err.response.data && err.response.data.error)
@@ -85,8 +87,7 @@ const App = (props) => {
     if (window.confirm('Are you sure you wanna delete that?'))
     {
       try {
-        await blogService.destroy(blogId)
-        setBlogs( blogs.filter ( blog => blog.id !== blogId ))
+        props.destroy(blogId)
         notify('Successfully deleted. There are worse crimes than burning books. One of them is not reading them.', 'success')
       } catch(err) {
         if (err.response && err.response.data && err.response.data.error)
@@ -96,14 +97,7 @@ const App = (props) => {
   }
 
   const handleLike = async (blogObject) => {
-    try {
-      await blogService.update(blogObject)
-      setBlogs(blogs.map( blog => blog.id === blogObject.id ? blogObject : blog ))
-    } catch(err) {
-      if (err.response && err.response.data && err.response.data.error)
-        notify(err.response.data.error, 'error')
-    }
-
+    props.voteFor(blogObject)
   }
 
   if (user === null) {
@@ -133,7 +127,7 @@ const App = (props) => {
 
         <ul>
           {
-            blogs.map(blog =>
+            blogs.sort( (a, b) => a.likes > b.likes ? -1 : 1 ).map(blog =>
               <Blog
                 blog={blog}
                 handleLike={handleLike}
@@ -151,6 +145,10 @@ const App = (props) => {
 }
 
 const mapDispatchToProps = {
+  initBlog,
+  createBlog,
+  voteFor,
+  destroy,
   createNotification
 }
 
